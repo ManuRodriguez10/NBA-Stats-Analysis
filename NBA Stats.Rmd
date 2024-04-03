@@ -1,0 +1,179 @@
+---
+title: "Final Project"
+author: "Manuel Rodriguez"
+date: "2024-01-24"
+output: html_document
+---
+
+## **Introduction**
+
+The data set used for this exploration project consists of each player's individual stats during the 2021 NBA Playoffs. Since it includes such a big amount of players and their data, I was curious to know which players were the best for each of the 4 big stats in basketball (points, assists, rebounds, blocks). Considering that in a playoff situation some players play more games than others depending on the stage their team gets to, I will also find the top performing players in the final series and for the championship winners (Milwaukee Bucks). Something that I also believe is important to point out is that players have different roles in their teams. Some of them are rotation players and some of them are franchise/star players. I would also like to study the best players who played under the average amount of minutes per game in the NBA. 
+
+Let's load some data and get started with our analysis.
+
+```{r}
+# Load necessary libraries
+library(mosaic)
+
+# Import the data (provide the full path to the CSV file)
+nba_data <- read.csv("/Users/manuelrodriguez/Desktop/2021_Stats.csv")
+
+# Display the first few rows of the dataset
+head(nba_data)
+
+# Display a summary of the dataset
+summary(nba_data)
+```
+
+## **Who were the best players in each of the top 4 stats?**
+
+```{r}
+# Sort the data by PTS
+nba_data$PTS <- as.numeric(nba_data$PTS)
+sorted_data <- nba_data[order(-nba_data$PTS),]
+
+# Select the top 5 players and print them
+top_players <- head(sorted_data, 5)
+cat("Top 5 Players with the highest points:\n")
+print(top_players)
+
+# Create the dotplot
+dotchart(rev(top_players$PTS), labels = rev(top_players$Player), cex = 1,
+         main = "Top 5 Players by Points",
+         xlab = "Points Per Game", ylab = "",
+         pch = 16, col = "darkblue", xlim = c(0, max(top_players$PTS) + 2))
+
+# Add labels with games played next to the dots
+text(rev(top_players$PTS), seq_along(top_players$Player),
+     labels = paste(" (GP:", (top_players$G), ")"), col = "black", pos = 3)
+ 
+```
+
+## **Points:**
+
+In the 2021 NBA Playoffs, the players with the highest points per game were Giannis Antetokoumpo, Luka Doncic, Nikola Jokic, Jimmy Butler and Stephen Curry. Usually a player with a high amount of points per game, lost in the first or second round and didn't play much games. Therefore, it is easier to maintain a higher point average because you didn't play a high amount of games. In the dotplot, each dot represents points per game for the top 5 players. Above each dot I point out how many games each player played (GP).
+
+Something interesting is that Giannis Antetokoumpo, who had the highest points per game average throughout the playoffs, was part of the Milwawkee Bucks, the 2021 NBA Champions. Meaning he played the highest amount of games possible and still ended up having the highest average. 
+
+## **Assists:**
+
+```{r}
+# Sort the data by AST
+nba_data$AST <- as.numeric(nba_data$AST)
+sorted_data <- nba_data[order(-nba_data$AST),]
+
+# Select the top 5 players and print them
+top_players <- head(sorted_data, 5)
+cat("Top 5 Players with the highest assists:\n")
+print(top_players)
+
+# Create the bar chart
+par(mar = c(6, 6, 7, 1))  # Adjust the margins as needed
+barplot(top_players$AST, names.arg = top_players$Player, col = "coral",
+        main = "Top 5 Players by Assists", xlab = "Player", ylab = "Assists Per Game", border = "black",
+        cex.names = 0.5, width = 0.6) 
+```
+
+In the 2021 NBA Playoffs, the players with the highest assists per game were Ja Morant, James Harden, Chris Paul, Khris Middleton and Giannis Antetokounmpo. Again, three of these players played in the finals which means they had the highest amount of games possible. Something that should be pointed out is that the positions on the floor that usually have the highest assist average are guards. Since they are the smaller, agile and smart players it is a requirement for their position to have a good sense of playmaking. Four of the five players in this list are guards, Giannis Antetokounmpo being the only player in this list that doesn't play either shooting guard or point guard. 
+
+## **Rebounds/Blocks:**
+
+```{r}
+# Sort the data by TRB
+nba_data$TRB <- as.numeric(nba_data$TRB)
+sorted_data <- nba_data[order(-nba_data$TRB),]
+
+# Select the top 5 players and print them
+top_players <- head(sorted_data, 5)
+cat("Top 5 Players with the highest rebounds:\n")
+print(top_players)
+
+# Create the bar chart
+par(mar = c(6, 6, 7, 1))  # Adjust the margins as needed
+barplot(top_players$TRB, names.arg = top_players$Player, col = "pink",
+        main = "Top 5 Players by Rebounds", xlab = "Player", ylab = "Rebounds Per Game", border = "black",
+        cex.names = 0.4, width = 0.6)  
+```
+
+```{r}
+# Sort the data by BLK
+nba_data$BLK <- as.numeric(nba_data$BLK)
+sorted_data <- nba_data[order(-nba_data$BLK),]
+
+# Select the top 5 players and print them
+top_players <- head(sorted_data, 5)
+cat("Top 5 Players with the highest blocks:\n")
+print(top_players)
+
+# Create the bar chart
+par(mar = c(6, 6, 7, 1))  # Adjust the margins as needed
+barplot(top_players$BLK, names.arg = top_players$Player, col = "brown",
+        main = "Top 5 Players by Blocks", xlab = "Player", ylab = "Blocks Per Game", border = "black",
+        cex.names = 0.5, width = 0.6) 
+```
+
+I included both rebounds and blocks in the same category since these are very common around the same positions. Rebounds and blocks are tasks that are usually left to the taller, stronger players like the centers and power forwards. Rebounds are divided into offensive and defensive rebounds. Rebounds that are picked up in the other team's basket are offensive rebounds. On the other hand, rebounds that are picked up in your team's basket are defensive rebounds. The players with the highest rebounds per game during the playoffs are Johan Valencunis, Giannis Antetokounmpo, Rudy Gobert, Nikola Jokic and Nikola Vucevic. 4 of these players being centers and one of them a power forward. For blocks, the five players who stood out are Jaren Jackson Jr, Nic Claxton, Robert Williams, Karl-Anthony Towns and Jaden McDaniels. All 5 of these players played the center position. 
+
+## Who scored the most points in the NBA Finals Series?
+
+```{r}
+#Make sure the data is only for Bucks and Suns Players
+selected_teams <- c("MIL", "PHO")
+filtered_data <- nba_data[nba_data$Tm %in% selected_teams, ]
+
+#Adjust data to PTS and select the top 5 players
+filtered_data$PTS <- as.numeric(filtered_data$PTS)
+sorted_data <- filtered_data[order(-filtered_data$PTS),]
+top_players <- head(sorted_data, 5)
+cat("Top 5 Players from the Milwaukee Bucks or Phoenix Suns with the highest points:\n")
+print(top_players)
+
+#Create bar chart
+par(mar = c(6, 6, 7, 1))  
+barplot(top_players$PTS, names.arg = top_players$Player,
+        col = ifelse(top_players$Tm == "MIL", "darkgreen", "purple"), #Bar is purple for Suns players and green for Bucks players
+        main = "Top 5 Players by Points (NBA Finals)", xlab = "Player", ylab = "Points Per Game", border = "black",
+        cex.names = 0.5, width = 0.6) 
+```
+
+The Milwaukee Bucks faced the Phoenix Suns in a best-of-seven series. The Bucks won the series 4-2, securing their first NBA championship in 50 years. Giannis Antetokounmpo, delivered some historic performances throughout the Finals and was named the NBA Finals MVP.
+
+To tell who plays for which team, the players with the green bars play for the Milwaukee Bucks and players with the purple bars play for the Phoenix Suns. It's easy to point out that the player with the most points in the finals series is Giannis Antetokounmpo. Which is also the player with the points per game average in the entire playoffs and the championship winning team. 
+
+## Top scorers under the average amount of minutes
+
+```{r}
+# Filter the data for players who have played under 20 minutes per game
+filtered_data <- nba_data[nba_data$MP < 20,]
+
+# Sort the filtered data by PTS (make sure 'PTS' is numeric)
+filtered_data$PTS <- as.numeric(filtered_data$PTS)
+sorted_data <- filtered_data[order(-filtered_data$PTS),]
+
+# Select the top 5 players
+top_5_players <- head(sorted_data, 5)
+
+# Sort the filtered data by PTS (make sure 'PTS' is numeric)
+filtered_data$PTS <- as.numeric(filtered_data$PTS)
+sorted_data <- filtered_data[order(-filtered_data$PTS),]
+
+# Select the top 5 players
+top_5_players <- head(sorted_data, 5)
+
+# Create a dotplot of PTS with minutes per game for the top 5 players
+dotchart(top_5_players$PTS, labels = top_5_players$Player, cex = 1,
+         main = "Top 5 Players by Points (Below Average Minutes)",
+         xlab = "Points Per Game", ylab = "",
+         pch = 16, col = "darkred")
+
+# Add text labels for minutes per game
+text(top_5_players$PTS, seq_along(top_5_players$Player), labels = paste(top_5_players$MP, "MP"), 
+     pos = ifelse(seq_along(top_5_players$Player) == 1, 2, 4), col = "black")
+```
+
+In the last part of my research, I focused on basketball players who don't play as much as the average in the NBA. I wanted to see which players score the most points in a game even though they spend less than 20 minutes (average amount of minutes per game in the NBA) on the court. After looking at the stats, I found the top five players who fit this criteria. This shows that these players bring something special to the game, proving that you don't need a lot of time on the court to make a big impact in basketball.\
+In this dotplot, each dot represents the average points per game scored by each player and their average amount of minutes per game (MP).
+
+## **Conclusion**
+
+In this exploration project, we delved into the individual player statistics of the 2021 NBA Playoffs, aiming to identify the top performers in four crucial basketball categories: points, assists, rebounds, and blocks. Additionally, we focused on players' performances in the NBA Finals and examined the contributions of those playing under the average minutes per game.
